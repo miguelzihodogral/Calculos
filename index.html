@@ -60,6 +60,7 @@
         <!-- Área de Resultado -->
         <div id="resultContainer" class="mt-8 pt-6 border-t border-indigo-200 hidden">
             <h2 class="text-xl font-semibold text-gray-700 mb-3">Resultado do Cálculo:</h2>
+            <!-- Note que o texto 'R$' foi removido do campo de resultado -->
             <p id="resultDisplay" class="text-4xl font-extrabold text-indigo-700 text-center bg-indigo-50 p-4 rounded-lg shadow-inner"></p>
         </div>
 
@@ -95,16 +96,34 @@
             
             // 3. Realizar o cálculo: (numero * 3) + 40000
             const result = (numberValue * 3) + 40000;
+            let formattedResult;
 
-            // 4. Formatar o resultado para exibição (usando formato de moeda brasileira para melhor legibilidade)
-            // Note: O cálculo usa o valor exato, a formatação é apenas para a exibição na tela.
-            const formattedResult = new Intl.NumberFormat('pt-BR', { 
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2 
-            }).format(result);
+            // 4. Formatar o resultado conforme as regras solicitadas:
+            //    - Sem separador de milhares (useGrouping: false).
+            //    - Usa vírgula para decimal (devido ao locale 'pt-BR').
+            //    - Sem símbolo de moeda.
+
+            // Verifica se o resultado é um número inteiro (sem centavos)
+            if (result % 1 === 0) {
+                // Se for inteiro, formata com zero casas decimais
+                formattedResult = new Intl.NumberFormat('pt-BR', {
+                    style: 'decimal',
+                    useGrouping: false, // Desativa o separador de milhares
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(result);
+            } else {
+                // Se tiver casas decimais, formata com duas casas decimais
+                formattedResult = new Intl.NumberFormat('pt-BR', {
+                    style: 'decimal',
+                    useGrouping: false, // Desativa o separador de milhares
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(result);
+            }
             
             // 5. Exibir o resultado
-            resultDisplay.textContent = `R$ ${formattedResult}`;
+            resultDisplay.textContent = formattedResult;
             resultContainer.classList.remove('hidden');
         }
     </script>
